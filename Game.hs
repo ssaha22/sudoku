@@ -2,7 +2,9 @@ module Game where
 
 type Board = [[Int]]
 
-type Action = ((Int, Int), Int)
+type Position = (Int, Int)
+
+type Action = (Position, Int)
 
 exampleBoard :: Board
 exampleBoard =
@@ -43,12 +45,21 @@ exampleBoardSolution =
     [7, 4, 3, 5, 2, 6, 8, 9, 1]
   ]
 
+unsolvableBoard :: Board
+unsolvableBoard =
+  [ [5, 1, 6, 8, 4, 9, 7, 3, 2],
+    [3, 0, 7, 6, 0, 5, 0, 0, 0],
+    [8, 0, 9, 7, 0, 0, 0, 6, 5],
+    [1, 3, 5, 0, 6, 0, 9, 0, 7],
+    [4, 7, 2, 5, 9, 1, 0, 0, 6],
+    [9, 6, 8, 3, 7, 0, 0, 5, 0],
+    [2, 5, 3, 1, 8, 6, 0, 7, 4],
+    [6, 8, 4, 2, 0, 7, 5, 0, 0],
+    [7, 9, 1, 0, 5, 0, 6, 0, 8]
+  ]
+
 exampleBoardPair :: (Board, Board)
 exampleBoardPair = (exampleBoard, exampleBoardSolution)
-
-performAction :: Board -> Action -> Board
-performAction board action =
-  if isValidAction board action then performValidAction board action else board
 
 isValidAction :: Board -> Action -> Bool
 isValidAction board ((row, col), num)
@@ -114,4 +125,4 @@ rowToString [] = "| "
 rowToString (h : t) = rowToString [] ++ show h ++ " " ++ rowToString t
 
 actionToString :: Action -> String
-actionToString ((row, col), num) = "Placed " ++ show num ++ " at position (" ++ show row ++ "," ++ show col ++ ")"
+actionToString (pos, num) = "Placed " ++ show num ++ " at position " ++ show pos
