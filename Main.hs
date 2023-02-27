@@ -1,15 +1,7 @@
 import Data.Char (isDigit)
 import Data.Maybe (isNothing)
 import Game
-import Solver
 import System.Exit (exitSuccess)
-
-play :: Board -> IO ()
-play board = do
-  let result = solve board
-  case result of
-    Just solution -> runGame (board, solution)
-    Nothing -> putStrLn "Board has no solution"
 
 runGame :: (Board, Board) -> IO b
 runGame (board, solution) = do
