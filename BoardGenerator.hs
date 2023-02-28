@@ -7,6 +7,7 @@ import Game
 import Solver
 import System.Random (randomRIO)
 
+-- produces a starting and solution board of the given difficulty
 generateBoard :: String -> IO (Board, Board)
 generateBoard difficulty = do
   let baseBoard
@@ -30,20 +31,21 @@ createJumbledBoard board = do
   newBoard8 <- shuffleGroupThreeRows newBoard7 0 8 0
   shuffleGroupThreeColumns newBoard8 0 8 0
 
+-- removes n numbers off the board
 emptyBoard :: Board -> Int -> IO Board
-emptyBoard board counter =
-  if counter == 0
+emptyBoard board n =
+  if n == 0
     then return board
     else do
       row <- randomInt 0 8
       col <- randomInt 0 8
       if board !! row !! col == 0
-        then emptyBoard board counter
+        then emptyBoard board n
         else do
-          let newBoard = performValidAction board ((row, col), 0)
+          let newBoard = performAction board ((row, col), 0)
           if solvable newBoard
-            then emptyBoard newBoard (counter - 1)
-            else emptyBoard board counter
+            then emptyBoard newBoard (n - 1)
+            else emptyBoard board n
 
 -- returns a random integer in the range lo to hi
 randomInt :: Int -> Int -> IO Int
@@ -65,8 +67,8 @@ replaceInBoard :: Board -> Int -> Int -> Int -> Board
 replaceInBoard board rowCounter num n = do
   let cIndex = fromJust (elemIndex num (board !! rowCounter))
   let nIndex = fromJust (elemIndex n (board !! rowCounter))
-  let newBoard = performValidAction board ((rowCounter, cIndex), n)
-  let newBoard2 = performValidAction newBoard ((rowCounter, nIndex), num)
+  let newBoard = performAction board ((rowCounter, cIndex), n)
+  let newBoard2 = performAction newBoard ((rowCounter, nIndex), num)
   if rowCounter == 8
     then newBoard2
     else replaceInBoard newBoard2 (rowCounter + 1) num n
@@ -94,6 +96,8 @@ shuffleColumns board firstColumn lastColumn counter = do
   transposedNewBoard <- shuffleRows (transpose board) firstColumn lastColumn counter
   return (transpose transposedNewBoard)
 
+-- mix up blocks of 3 rows: block 1 row 0-2, block 2 row 3-5, block 3 row 6-8
+-- start counter = 0, firstRow = 0, lastRow = 8
 shuffleGroupThreeRows :: Board -> Int -> Int -> Int -> IO Board
 shuffleGroupThreeRows board firstRow lastRow counter = do
   n <- randomInt firstRow lastRow
