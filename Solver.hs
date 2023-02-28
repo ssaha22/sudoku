@@ -21,6 +21,10 @@ solve' board positions actions solutions
       let result = solve' newBoard newPositions newActions solutions
       result ++ solve' board positions (tail actions) solutions
 
+-- returns True if a board has only one valid solution, False otherwise
+solvable :: Board -> Bool
+solvable board = length (solve board) == 1
+
 getEmptyPositions :: Board -> [Position]
 getEmptyPositions board = [(row, col) | row <- [0 .. 8], col <- [0 .. 8], board !! row !! col == 0]
 
