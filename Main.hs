@@ -1,7 +1,22 @@
+import BoardGenerator
+import Boards
 import Data.Char (isDigit)
 import Data.Maybe (isNothing)
 import Game
+import Solver
 import System.Exit (exitSuccess)
+
+play :: IO b
+play = do
+  putStrLn "Welcome to Haskell Sudoku!"
+  difficulty <- getDifficulty
+  boardPair <- generateBoard difficulty
+  runGame boardPair
+
+playWithBoard board = do
+  if solvable board
+    then runGame (board, head (solve board))
+    else putStrLn "Invalid starting board."
 
 runGame :: (Board, Board) -> IO b
 runGame (board, solution) = do
@@ -32,6 +47,16 @@ runGame (board, solution) = do
                 else do
                   putStrLn "Invalid move"
                   runGame (board, solution)
+
+getDifficulty :: IO String
+getDifficulty = do
+  putStr "Enter the difficulty you would like to play ('easy', 'medium', or 'hard'): "
+  difficulty <- getLine
+  if elem difficulty ["easy", "medium", "hard"]
+    then return difficulty
+    else do
+      putStrLn "Invalid input"
+      getDifficulty
 
 getAction :: IO Action
 getAction = do
